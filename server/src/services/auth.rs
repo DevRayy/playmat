@@ -2,9 +2,7 @@ pub mod grpc {
     tonic::include_proto!("auth");
 }
 
-pub struct Service {
-
-}
+pub struct Service {}
 
 impl Service {
     pub fn new() -> Self {
@@ -18,7 +16,10 @@ impl Service {
 
 #[tonic::async_trait]
 impl grpc::auth_server::Auth for Service {
-    async fn login(&self, request: tonic::Request<grpc::LoginRequest>) -> Result<tonic::Response<grpc::LoginResponse>, tonic::Status> {
+    async fn login(
+        &self,
+        request: tonic::Request<grpc::LoginRequest>,
+    ) -> Result<tonic::Response<grpc::LoginResponse>, tonic::Status> {
         let response = grpc::LoginResponse {
             token: request.into_inner().username,
         };
