@@ -1,0 +1,5 @@
+[log]
+level = "trace"
+
+[grpc]
+address = "[::1]:50051"
