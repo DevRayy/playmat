@@ -2,4 +2,4 @@
 level = "trace"
 
 [grpc]
-address = "[::1]:50051"
+address = "[::1]:9090"
