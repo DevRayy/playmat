@@ -1,12 +1,18 @@
+use crate::repository;
+
 pub mod grpc {
     tonic::include_proto!("auth");
 }
 
-pub struct Service {}
+pub struct Service {
+    users_repo: repository::users::Users,
+}
 
 impl Service {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(users_repo: repository::users::Users) -> Self {
+        Self {
+            users_repo,
+        }
     }
 
     pub fn into_server(self) -> grpc::auth_server::AuthServer<Self> {
@@ -16,12 +22,15 @@ impl Service {
 
 #[tonic::async_trait]
 impl grpc::auth_server::Auth for Service {
-    async fn login(
+    async fn register(
         &self,
-        request: tonic::Request<grpc::LoginRequest>,
-    ) -> Result<tonic::Response<grpc::LoginResponse>, tonic::Status> {
-        let response = grpc::LoginResponse {
-            token: request.into_inner().username,
+        request: tonic::Request<grpc::RegisterRequest>,
+    ) -> Result<tonic::Response<grpc::RegisterResponse>, tonic::Status> {
+        let request = request.into_inner();
+        self.users_repo.create(request.email, request.password).await.unwrap();
+
+        let response = grpc::RegisterResponse {
+
         };
         Ok(tonic::Response::new(response))
     }

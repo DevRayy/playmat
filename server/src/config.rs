@@ -8,6 +8,7 @@ use std::net::SocketAddr;
 pub struct Cfg {
     pub log: Log,
     pub grpc: Grpc,
+    pub db: Db,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -18,6 +19,15 @@ pub struct Log {
 #[derive(Serialize, Deserialize)]
 pub struct Grpc {
     pub address: SocketAddr,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Db {
+    pub host: String,
+    pub port: u16,
+    pub user: String,
+    pub password: String,
+    pub db: String,
 }
 
 impl Cfg {

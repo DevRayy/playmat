@@ -3,3 +3,10 @@ level = "trace"
 
 [grpc]
 address = "[::1]:9090"
+
+[db]
+host = "localhost"
+port = 27017
+user = "mongo"
+password = "mongo"
+db = "admin"
