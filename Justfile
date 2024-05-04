@@ -4,7 +4,7 @@ lint:
 
 tidy:
     cargo fmt
-    cargo clippy --fix -- -D warnings
+    cargo clippy --allow-dirty --fix -- -D warnings
 
 run app:
     cargo run -p {{app}}

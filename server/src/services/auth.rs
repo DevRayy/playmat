@@ -10,9 +10,7 @@ pub struct Service {
 
 impl Service {
     pub fn new(users_repo: repository::users::Users) -> Self {
-        Self {
-            users_repo,
-        }
+        Self { users_repo }
     }
 
     pub fn into_server(self) -> grpc::auth_server::AuthServer<Self> {
@@ -27,11 +25,12 @@ impl grpc::auth_server::Auth for Service {
         request: tonic::Request<grpc::RegisterRequest>,
     ) -> Result<tonic::Response<grpc::RegisterResponse>, tonic::Status> {
         let request = request.into_inner();
-        self.users_repo.create(request.email, request.password).await.unwrap();
+        self.users_repo
+            .create(request.email, request.password)
+            .await
+            .unwrap();
 
-        let response = grpc::RegisterResponse {
-
-        };
+        let response = grpc::RegisterResponse {};
         Ok(tonic::Response::new(response))
     }
 }

@@ -1,7 +1,7 @@
-mod config;
-mod services;
 mod build;
+mod config;
 mod repository;
+mod services;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

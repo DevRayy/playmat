@@ -9,25 +9,25 @@ struct User {
     password: String,
 }
 
-
 pub(crate) struct Users {
     client: mongodb::Client,
 }
 
 impl Users {
     pub fn new(client: mongodb::Client) -> Self {
-        Self {
-            client,
-        }
+        Self { client }
     }
 
-    pub async fn create(&self, email: String, password: String) -> Result<(), mongodb::error::Error> {
+    pub async fn create(
+        &self,
+        email: String,
+        password: String,
+    ) -> Result<(), mongodb::error::Error> {
         let collection = self.client.database(DATABASE).collection(COLLECTION);
 
-        collection.insert_one(User{
-            email,
-            password,
-        }, None).await?;
+        collection
+            .insert_one(User { email, password }, None)
+            .await?;
 
         Ok(())
     }
