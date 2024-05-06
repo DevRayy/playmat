@@ -7,4 +7,4 @@ tidy:
     cargo clippy --allow-dirty --fix -- -D warnings
 
 run app:
-    cargo run -p {{app}}
+    cargo run -p {{app}} --release
