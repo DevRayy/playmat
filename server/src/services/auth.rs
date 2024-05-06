@@ -26,7 +26,10 @@ impl grpc::auth_server::Auth for Service {
     ) -> Result<tonic::Response<grpc::RegisterResponse>, tonic::Status> {
         let request = request.into_inner();
         self.users_repo
-            .create(request.email, bcrypt::hash(request.password, bcrypt::DEFAULT_COST).unwrap())
+            .create(
+                request.email,
+                bcrypt::hash(request.password, bcrypt::DEFAULT_COST).unwrap(),
+            )
             .await
             .unwrap();
 
