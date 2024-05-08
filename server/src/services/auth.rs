@@ -5,12 +5,14 @@ pub mod grpc {
 }
 
 pub struct Service {
-    register_feature: features::auth_register_user::Feature,
+    register_feature: features::AuthRegisterUser,
 }
 
 impl Service {
-    pub fn new(feat: features::auth_register_user::Feature) -> Self {
-        Self { register_feature: feat }
+    pub fn new(feat: features::AuthRegisterUser) -> Self {
+        Self {
+            register_feature: feat,
+        }
     }
 
     pub fn into_server(self) -> grpc::auth_server::AuthServer<Self> {
@@ -26,7 +28,10 @@ impl grpc::auth_server::Auth for Service {
     ) -> Result<tonic::Response<grpc::RegisterResponse>, tonic::Status> {
         let request = request.into_inner();
 
-        self.register_feature.run(request.email, request.password).await.unwrap();
+        self.register_feature
+            .run(request.email, request.password)
+            .await
+            .unwrap();
 
         let response = grpc::RegisterResponse {};
         Ok(tonic::Response::new(response))

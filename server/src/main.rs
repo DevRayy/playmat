@@ -1,7 +1,7 @@
 mod build;
 mod config;
-mod services;
 mod features;
+mod services;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,7 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Config: {:?}", cfg);
 
     let mongo = build::mongo(cfg.db).await?;
-    let feat = features::auth_register_user::Feature::new(mongo).await;
+    let feat = features::AuthRegisterUser::new(mongo).await;
 
     let auth_service = services::auth::Service::new(feat);
 

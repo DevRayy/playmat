@@ -24,15 +24,18 @@ impl Feature {
             .create_index(
                 mongodb::IndexModel::builder()
                     .keys(doc! { "email": 1 })
-                    .options(mongodb::options::IndexOptions::builder().unique(true).build())
+                    .options(
+                        mongodb::options::IndexOptions::builder()
+                            .unique(true)
+                            .build(),
+                    )
                     .build(),
                 None,
-            ).await
+            )
+            .await
             .unwrap();
 
-        Self {
-            mongo_client,
-        }
+        Self { mongo_client }
     }
 
     pub async fn run(&self, email: String, password: String) -> Result<(), Box<dyn Error>> {
