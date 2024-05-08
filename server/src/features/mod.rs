@@ -1,0 +1,1 @@
+pub(crate) mod auth_register_user;

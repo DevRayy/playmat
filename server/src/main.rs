@@ -1,7 +1,7 @@
 mod build;
 mod config;
-mod repository;
 mod services;
+mod features;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,9 +11,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Config: {:?}", cfg);
 
     let mongo = build::mongo(cfg.db).await?;
-    let users_repo = repository::users::Users::new(mongo).await;
+    let feat = features::auth_register_user::Feature::new(mongo).await;
 
-    let auth_service = services::auth::Service::new(users_repo);
+    let auth_service = services::auth::Service::new(feat);
 
     tonic::transport::Server::builder()
         .add_service(auth_service.into_server())

@@ -1,16 +1,16 @@
-use crate::repository;
+use crate::features;
 
 pub mod grpc {
     tonic::include_proto!("auth");
 }
 
 pub struct Service {
-    users_repo: repository::users::Users,
+    register_feature: features::auth_register_user::Feature,
 }
 
 impl Service {
-    pub fn new(users_repo: repository::users::Users) -> Self {
-        Self { users_repo }
+    pub fn new(feat: features::auth_register_user::Feature) -> Self {
+        Self { register_feature: feat }
     }
 
     pub fn into_server(self) -> grpc::auth_server::AuthServer<Self> {
@@ -25,13 +25,8 @@ impl grpc::auth_server::Auth for Service {
         request: tonic::Request<grpc::RegisterRequest>,
     ) -> Result<tonic::Response<grpc::RegisterResponse>, tonic::Status> {
         let request = request.into_inner();
-        self.users_repo
-            .create(
-                request.email,
-                bcrypt::hash(request.password, bcrypt::DEFAULT_COST).unwrap(),
-            )
-            .await
-            .unwrap();
+
+        self.register_feature.run(request.email, request.password).await.unwrap();
 
         let response = grpc::RegisterResponse {};
         Ok(tonic::Response::new(response))
