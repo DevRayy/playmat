@@ -11,7 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Config: {:?}", cfg);
 
     let mongo = build::mongo(cfg.db).await?;
-    let users_repo = repository::users::Users::new(mongo);
+    let users_repo = repository::users::Users::new(mongo).await;
 
     let auth_service = services::auth::Service::new(users_repo);
 
