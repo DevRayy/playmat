@@ -5,11 +5,11 @@ pub mod grpc {
 }
 
 pub struct Service {
-    register_feature: features::AuthRegisterUser,
+    register_feature: features::auth_register_user::Feature,
 }
 
 impl Service {
-    pub fn new(feat: features::AuthRegisterUser) -> Self {
+    pub fn new(feat: features::auth_register_user::Feature) -> Self {
         Self {
             register_feature: feat,
         }
@@ -30,10 +30,15 @@ impl grpc::auth_server::Auth for Service {
 
         self.register_feature
             .run(request.email, request.password)
-            .await
-            .unwrap();
+            .await?;
 
         let response = grpc::RegisterResponse {};
         Ok(tonic::Response::new(response))
+    }
+}
+
+impl From<features::auth_register_user::errors::FeatureError> for tonic::Status {
+    fn from(value: features::auth_register_user::errors::FeatureError) -> Self {
+        tonic::Status::internal(value.to_string())
     }
 }

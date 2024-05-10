@@ -17,7 +17,7 @@ pub(crate) struct Feature {
 }
 
 impl Feature {
-    pub async fn new(mongo_client: mongodb::Client) -> Self {
+    pub async fn new(mongo_client: mongodb::Client) -> Result::<Self, self::errors::InitializationError> {
         mongo_client
             .database(DATABASE)
             .collection::<User>(COLLECTION)
@@ -32,13 +32,12 @@ impl Feature {
                     .build(),
                 None,
             )
-            .await
-            .unwrap();
+            .await?;
 
-        Self { mongo_client }
+        Ok(Self { mongo_client })
     }
 
-    pub async fn run(&self, email: String, password: String) -> Result<(), Box<dyn Error>> {
+    pub async fn run(&self, email: String, password: String) -> Result<(), self::errors::FeatureError> {
         let password = bcrypt::hash(password, bcrypt::DEFAULT_COST)?;
 
         self.mongo_client
@@ -48,5 +47,61 @@ impl Feature {
             .await?;
 
         Ok(())
+    }
+}
+
+pub mod errors {
+    use mongodb::error::Error;
+
+    #[derive(Debug, Clone)]
+    pub struct InitializationError {
+        message: String,
+    }
+
+    impl InitializationError {
+        pub fn new(message: String) -> Self {
+            Self { message }
+        }
+    }
+
+    impl std::fmt::Display for InitializationError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Cannot initialize feature: {}", self.message)
+        }
+    }
+
+    impl From<mongodb::error::Error> for InitializationError {
+        fn from(value: Error) -> Self {
+            Self::new(value.to_string())
+        }
+    }
+
+    #[derive(Debug, Clone)]
+    pub(crate) struct FeatureError {
+        message: String,
+    }
+
+    impl FeatureError {
+        pub fn new(message: String) -> Self {
+            Self { message }
+        }
+    }
+
+    impl std::fmt::Display for FeatureError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Cannot run feature: {}", self.message)
+        }
+    }
+
+    impl From<bcrypt::BcryptError> for FeatureError {
+        fn from(value: bcrypt::BcryptError) -> Self {
+            Self::new(value.to_string())
+        }
+    }
+
+    impl From<mongodb::error::Error> for FeatureError {
+        fn from(value: Error) -> Self {
+            Self::new(value.to_string())
+        }
     }
 }
