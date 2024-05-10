@@ -51,17 +51,9 @@ impl Feature {
 }
 
 pub mod errors {
-    use mongodb::error::Error;
-
     #[derive(Debug, Clone)]
     pub struct InitializationError {
         message: String,
-    }
-
-    impl InitializationError {
-        pub fn new(message: String) -> Self {
-            Self { message }
-        }
     }
 
     impl std::fmt::Display for InitializationError {
@@ -71,20 +63,14 @@ pub mod errors {
     }
 
     impl From<mongodb::error::Error> for InitializationError {
-        fn from(value: Error) -> Self {
-            Self::new(value.to_string())
+        fn from(value: mongodb::error::Error) -> Self {
+            Self { message: value.to_string() }
         }
     }
 
     #[derive(Debug, Clone)]
     pub(crate) struct FeatureError {
         message: String,
-    }
-
-    impl FeatureError {
-        pub fn new(message: String) -> Self {
-            Self { message }
-        }
     }
 
     impl std::fmt::Display for FeatureError {
@@ -100,8 +86,8 @@ pub mod errors {
     }
 
     impl From<mongodb::error::Error> for FeatureError {
-        fn from(value: Error) -> Self {
-            Self::new(value.to_string())
+        fn from(value: mongodb::error::Error) -> Self {
+            Self { message: value.to_string() }
         }
     }
 }
