@@ -37,8 +37,15 @@ impl grpc::auth_server::Auth for Service {
     }
 }
 
-impl From<features::auth_register_user::errors::FeatureError> for tonic::Status {
-    fn from(value: features::auth_register_user::errors::FeatureError) -> Self {
-        tonic::Status::internal(value.to_string())
+impl From<features::auth_register_user::Error> for tonic::Status {
+    fn from(value: features::auth_register_user::Error) -> Self {
+        match value {
+            features::auth_register_user::Error::Unknown(value) => {
+                return tonic::Status::internal(value.to_string());
+            }
+            features::auth_register_user::Error::HashingError(value) => {
+                return tonic::Status::internal(value.to_string());
+            }
+        }
     }
 }
