@@ -8,9 +8,7 @@ pub(crate) struct Feature {
 
 impl Feature {
     pub fn new(db: mongodb::Client) -> Self {
-        Self {
-            db
-        }
+        Self { db }
     }
 
     pub async fn run(&self) -> Result<(), Error> {
@@ -21,7 +19,9 @@ impl Feature {
                 mongodb::IndexModel::builder()
                     .keys(doc! { "email": 1 })
                     .options(
-                        mongodb::options::IndexOptions::builder().unique(true).build(),
+                        mongodb::options::IndexOptions::builder()
+                            .unique(true)
+                            .build(),
                     )
                     .build(),
                 None,

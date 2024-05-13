@@ -58,18 +58,16 @@ impl From<bcrypt::BcryptError> for Error {
 impl From<mongodb::error::Error> for Error {
     fn from(value: mongodb::error::Error) -> Self {
         match value.kind.as_ref() {
-            mongodb::error::ErrorKind::Write(write_error) => {
-                match write_error {
-                    mongodb::error::WriteFailure::WriteError(write_error) => {
-                        if write_error.code == 11000 {
-                            Self::DuplicateEmail
-                        } else {
-                            Self::Unknown(write_error.message.clone())
-                        }
+            mongodb::error::ErrorKind::Write(write_error) => match write_error {
+                mongodb::error::WriteFailure::WriteError(write_error) => {
+                    if write_error.code == 11000 {
+                        Self::DuplicateEmail
+                    } else {
+                        Self::Unknown(write_error.message.clone())
                     }
-                    _ => Self::Unknown(format!("{:?}", write_error)),
                 }
-            }
+                _ => Self::Unknown(format!("{:?}", write_error)),
+            },
             _ => Self::Unknown(value.to_string()),
         }
     }

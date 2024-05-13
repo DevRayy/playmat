@@ -42,13 +42,13 @@ impl From<Error> for tonic::Status {
     fn from(value: Error) -> Self {
         match value {
             Error::Unknown(value) => {
-                return tonic::Status::internal(value.to_string());
+                tonic::Status::internal(value.to_string())
             }
             Error::HashingError(value) => {
-                return tonic::Status::internal(value.to_string());
+                tonic::Status::internal(value.to_string())
             }
             Error::DuplicateEmail => {
-                return tonic::Status::already_exists(value.to_string());
+                tonic::Status::already_exists(value.to_string())
             }
         }
     }
