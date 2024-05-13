@@ -63,6 +63,7 @@ impl From<mongodb::error::Error> for InitializationError {
 pub enum Error {
     Unknown(String),
     HashingError(String),
+    DuplicateEmail,
 }
 
 impl std::fmt::Display for Error {
@@ -70,6 +71,7 @@ impl std::fmt::Display for Error {
         match self {
             Self::Unknown(value) => write!(f, "Unknown error: {}", value),
             Self::HashingError(value) => write!(f, "Hashing error: {}", value),
+            Self::DuplicateEmail => write!(f, "Duplicate email"),
         }
     }
 }
@@ -82,6 +84,20 @@ impl From<bcrypt::BcryptError> for Error {
 
 impl From<mongodb::error::Error> for Error {
     fn from(value: mongodb::error::Error) -> Self {
-        Self::Unknown(value.to_string())
+        match value.kind.as_ref() {
+            mongodb::error::ErrorKind::Write(write_error) => {
+                match write_error {
+                    mongodb::error::WriteFailure::WriteError(write_error) => {
+                        if write_error.code == 11000 {
+                            Self::DuplicateEmail
+                        } else {
+                            Self::Unknown(write_error.message.clone())
+                        }
+                    }
+                    _ => Self::Unknown(format!("{:?}", write_error)),
+                }
+            }
+            _ => Self::Unknown(value.to_string()),
+        }
     }
 }

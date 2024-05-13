@@ -1,4 +1,5 @@
 use crate::features;
+use crate::features::auth_register_user::Error;
 
 pub mod grpc {
     tonic::include_proto!("auth");
@@ -37,14 +38,17 @@ impl grpc::auth_server::Auth for Service {
     }
 }
 
-impl From<features::auth_register_user::Error> for tonic::Status {
-    fn from(value: features::auth_register_user::Error) -> Self {
+impl From<Error> for tonic::Status {
+    fn from(value: Error) -> Self {
         match value {
-            features::auth_register_user::Error::Unknown(value) => {
+            Error::Unknown(value) => {
                 return tonic::Status::internal(value.to_string());
             }
-            features::auth_register_user::Error::HashingError(value) => {
+            Error::HashingError(value) => {
                 return tonic::Status::internal(value.to_string());
+            }
+            Error::DuplicateEmail => {
+                return tonic::Status::already_exists(value.to_string());
             }
         }
     }
