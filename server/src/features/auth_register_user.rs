@@ -35,7 +35,7 @@ impl Feature {
 #[derive(Debug, Clone)]
 pub enum Error {
     Unknown(String),
-    HashingError(String),
+    Hashing(String),
     DuplicateEmail,
 }
 
@@ -43,7 +43,7 @@ impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Unknown(value) => write!(f, "Unknown error: {}", value),
-            Self::HashingError(value) => write!(f, "Hashing error: {}", value),
+            Self::Hashing(value) => write!(f, "Hashing error: {}", value),
             Self::DuplicateEmail => write!(f, "Duplicate email"),
         }
     }
@@ -51,7 +51,7 @@ impl std::fmt::Display for Error {
 
 impl From<bcrypt::BcryptError> for Error {
     fn from(value: bcrypt::BcryptError) -> Self {
-        Self::HashingError(value.to_string())
+        Self::Hashing(value.to_string())
     }
 }
 

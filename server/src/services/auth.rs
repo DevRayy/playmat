@@ -42,7 +42,7 @@ impl From<Error> for tonic::Status {
     fn from(value: Error) -> Self {
         match value {
             Error::Unknown(value) => tonic::Status::internal(value.to_string()),
-            Error::HashingError(value) => tonic::Status::internal(value.to_string()),
+            Error::Hashing(value) => tonic::Status::internal(value.to_string()),
             Error::DuplicateEmail => tonic::Status::already_exists(value.to_string()),
         }
     }
