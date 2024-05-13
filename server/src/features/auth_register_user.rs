@@ -15,24 +15,8 @@ pub(crate) struct Feature {
 }
 
 impl Feature {
-    pub async fn new(mongo_client: mongodb::Client) -> Result::<Self, InitializationError> {
-        mongo_client
-            .database(DATABASE)
-            .collection::<User>(COLLECTION)
-            .create_index(
-                mongodb::IndexModel::builder()
-                    .keys(doc! { "email": 1 })
-                    .options(
-                        mongodb::options::IndexOptions::builder()
-                            .unique(true)
-                            .build(),
-                    )
-                    .build(),
-                None,
-            )
-            .await?;
-
-        Ok(Self { mongo_client })
+    pub async fn new(mongo_client: mongodb::Client) -> Self {
+        Self { mongo_client }
     }
 
     pub async fn run(&self, email: String, password: String) -> Result<(), Error> {
@@ -45,17 +29,6 @@ impl Feature {
             .await?;
 
         Ok(())
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum InitializationError {
-    Mongo(String),
-}
-
-impl From<mongodb::error::Error> for InitializationError {
-    fn from(value: mongodb::error::Error) -> Self {
-        Self::Mongo(value.to_string())
     }
 }
 
