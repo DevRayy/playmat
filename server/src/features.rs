@@ -1,2 +1,2 @@
-pub mod dbinit;
 pub mod auth;
+pub mod dbinit;

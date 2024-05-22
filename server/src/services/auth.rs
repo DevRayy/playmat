@@ -43,10 +43,18 @@ impl grpc::auth_server::Auth for Service {
 impl From<features::auth::register_user::Error> for tonic::Status {
     fn from(value: features::auth::register_user::Error) -> Self {
         match value {
-            features::auth::register_user::Error::Unknown(value) => tonic::Status::internal(value.to_string()),
-            features::auth::register_user::Error::Hashing(value) => tonic::Status::internal(value.to_string()),
-            features::auth::register_user::Error::DuplicateEmail => tonic::Status::already_exists(value.to_string()),
-            features::auth::register_user::Error::InvalidEmail => tonic::Status::invalid_argument(value.to_string()),
+            features::auth::register_user::Error::Unknown(value) => {
+                tonic::Status::internal(value.to_string())
+            }
+            features::auth::register_user::Error::Hashing(value) => {
+                tonic::Status::internal(value.to_string())
+            }
+            features::auth::register_user::Error::DuplicateEmail => {
+                tonic::Status::already_exists(value.to_string())
+            }
+            features::auth::register_user::Error::InvalidEmail => {
+                tonic::Status::invalid_argument(value.to_string())
+            }
         }
     }
 }

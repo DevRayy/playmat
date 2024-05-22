@@ -29,7 +29,13 @@ impl Feature {
         self.mongo_client
             .database("auth")
             .collection("users")
-            .insert_one(DbModel { email: data.email, password: hashed_password }, None)
+            .insert_one(
+                DbModel {
+                    email: data.email,
+                    password: hashed_password,
+                },
+                None,
+            )
             .await?;
 
         Ok(())
