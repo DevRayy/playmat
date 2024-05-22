@@ -5,7 +5,7 @@ level = "trace"
 address = "0.0.0.0:9090"
 
 [db]
-host = "db"
+host = "localhost"
 port = 27017
 user = "mongo"
 password = "mongo"

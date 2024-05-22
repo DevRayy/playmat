@@ -1,16 +1,18 @@
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 
-const DATABASE: &str = "auth";
-const COLLECTION: &str = "users";
-
 #[derive(Serialize, Deserialize)]
-struct User {
+struct DbModel {
     email: String,
     password: String,
 }
 
-pub(crate) struct Feature {
+pub struct Query {
+    pub email: String,
+    pub password: String,
+}
+
+pub struct Feature {
     mongo_client: mongodb::Client,
 }
 
@@ -19,16 +21,26 @@ impl Feature {
         Self { mongo_client }
     }
 
-    pub async fn run(&self, email: String, password: String) -> Result<(), Error> {
-        let password = bcrypt::hash(password, bcrypt::DEFAULT_COST)?;
+    pub async fn run(&self, data: Query) -> Result<(), Error> {
+        validate_email(&data.email)?;
+
+        let hashed_password = bcrypt::hash(data.password, bcrypt::DEFAULT_COST)?;
 
         self.mongo_client
-            .database(DATABASE)
-            .collection(COLLECTION)
-            .insert_one(User { email, password }, None)
+            .database("auth")
+            .collection("users")
+            .insert_one(DbModel { email: data.email, password: hashed_password }, None)
             .await?;
 
         Ok(())
+    }
+}
+
+fn validate_email(email: &str) -> Result<(), Error> {
+    if email.contains('@') {
+        Ok(())
+    } else {
+        Err(Error::InvalidEmail)
     }
 }
 
@@ -37,6 +49,7 @@ pub enum Error {
     Unknown(String),
     Hashing(String),
     DuplicateEmail,
+    InvalidEmail,
 }
 
 impl std::fmt::Display for Error {
@@ -45,6 +58,7 @@ impl std::fmt::Display for Error {
             Self::Unknown(value) => write!(f, "Unknown error: {}", value),
             Self::Hashing(value) => write!(f, "Hashing error: {}", value),
             Self::DuplicateEmail => write!(f, "Duplicate email"),
+            Self::InvalidEmail => write!(f, "Invalid email"),
         }
     }
 }
