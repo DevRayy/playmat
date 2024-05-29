@@ -25,10 +25,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase repository
+        run: |
+          echo "REPOSITORY_LC=${DATA,,}" >>${GITHUB_ENV}
+        env:
+          DATA: '${{ github.repository_owner }}/${{ github.repository_name }}'
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./.devcontainer
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}/devcontainer:latest
+          tags: ghcr.io/${{ REPOSITORY_LC }}/devcontainer:latest
