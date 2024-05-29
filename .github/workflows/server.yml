@@ -17,14 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch dependencies
-        run: just deps
+      - name: Build
+        run: just build server
 
       - name: Lint with Just
         run: just lint
-
-      - name: Build
-        run: just build server
 
       - name: Run tests
         run: just test server
