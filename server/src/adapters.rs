@@ -32,7 +32,7 @@ pub(crate) struct EnvLoggerConfig {
     pub level: String,
 }
 
-pub(crate) fn env_logger(config: &EnvLoggerConfig) {
+pub(crate) fn init_env_logger(config: &EnvLoggerConfig) {
     use std::str::FromStr;
     env_logger::Builder::new().filter_level(log::LevelFilter::from_str(config.level.as_str()).unwrap()).init();
 }

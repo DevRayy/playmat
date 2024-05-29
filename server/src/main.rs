@@ -7,7 +7,7 @@ mod services;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cfg = config::Cfg::new()?;
 
-    adapters::env_logger(&cfg.adapters.env_logger);
+    adapters::init_env_logger(&cfg.adapters.env_logger);
     log::debug!("Starting with config:\n {:?}", cfg);
 
     let mongo = adapters::mongo(&cfg.adapters.mongo).await?;
