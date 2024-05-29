@@ -9,7 +9,10 @@ on:
 jobs:
   build:
 
-    runs-on: ghcr.io/devrayy/playmat/devcontainer:latest
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/devrayy/playmat/devcontainer:latest
 
     steps:
       - uses: actions/checkout@v2
