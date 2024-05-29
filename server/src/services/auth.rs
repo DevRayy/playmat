@@ -5,11 +5,11 @@ pub mod grpc {
 }
 
 pub struct Service {
-    register_feature: features::auth::register_user::Feature,
+    register_feature: features::register_user::Feature,
 }
 
 impl Service {
-    pub fn new(feat: features::auth::register_user::Feature) -> Self {
+    pub fn new(feat: features::register_user::Feature) -> Self {
         Self {
             register_feature: feat,
         }
@@ -29,7 +29,7 @@ impl grpc::auth_server::Auth for Service {
         let request = request.into_inner();
 
         self.register_feature
-            .run(features::auth::register_user::Query {
+            .run(features::register_user::Query {
                 email: request.email,
                 password: request.password,
             })
@@ -40,19 +40,19 @@ impl grpc::auth_server::Auth for Service {
     }
 }
 
-impl From<features::auth::register_user::Error> for tonic::Status {
-    fn from(value: features::auth::register_user::Error) -> Self {
+impl From<features::register_user::Error> for tonic::Status {
+    fn from(value: features::register_user::Error) -> Self {
         match value {
-            features::auth::register_user::Error::Unknown(value) => {
+            features::register_user::Error::Unknown(value) => {
                 tonic::Status::internal(value.to_string())
             }
-            features::auth::register_user::Error::Hashing(value) => {
+            features::register_user::Error::Hashing(value) => {
                 tonic::Status::internal(value.to_string())
             }
-            features::auth::register_user::Error::DuplicateEmail => {
+            features::register_user::Error::DuplicateEmail => {
                 tonic::Status::already_exists(value.to_string())
             }
-            features::auth::register_user::Error::InvalidEmail => {
+            features::register_user::Error::InvalidEmail => {
                 tonic::Status::invalid_argument(value.to_string())
             }
         }

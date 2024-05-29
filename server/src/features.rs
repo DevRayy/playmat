@@ -1,2 +1,2 @@
-pub mod auth;
 pub mod dbinit;
+pub mod register_user;

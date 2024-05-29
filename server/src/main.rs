@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     features::dbinit::Feature::new(mongo.clone()).run().await?;
 
-    let feat = features::auth::register_user::Feature::new(mongo).await;
+    let feat = features::register_user::Feature::new(mongo).await;
 
     let auth_service = services::auth::Service::new(feat);
 
