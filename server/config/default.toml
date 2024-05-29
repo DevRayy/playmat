@@ -1,12 +1,12 @@
-[log]
+[adapters.env_logger]
 level = "trace"
 
-[grpc]
-address = "0.0.0.0:9090"
-
-[db]
+[adapters.mongo]
 host = "localhost"
 port = 27017
 user = "mongo"
 password = "mongo"
 db = "admin"
+
+[grpc]
+address = "0.0.0.0:9090"

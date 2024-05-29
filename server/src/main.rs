@@ -5,12 +5,12 @@ mod services;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("Hello, world!");
     let cfg = config::Cfg::new()?;
 
-    println!("Config: {:?}", cfg);
+    adapters::env_logger(&cfg.adapters.env_logger);
+    log::debug!("Starting with config:\n {:?}", cfg);
 
-    let mongo = adapters::mongo(cfg.db).await?;
+    let mongo = adapters::mongo(&cfg.adapters.mongo).await?;
 
     features::dbinit::Feature::new(mongo.clone()).run().await?;
 

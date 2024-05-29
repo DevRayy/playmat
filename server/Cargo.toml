@@ -14,6 +14,8 @@ serde_json = { workspace = true }
 tokio = { workspace = true }
 mongodb = "2.8.2"
 bcrypt = "0.15.1"
+log = { workspace = true }
+env_logger = { workspace = true }
 
 [build-dependencies]
 tonic-build = { workspace = true }

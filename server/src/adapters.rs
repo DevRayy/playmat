@@ -19,10 +19,20 @@ impl MongoConfig {
 }
 
 pub(crate) async fn mongo(
-    config: MongoConfig,
+    config: &MongoConfig,
 ) -> Result<mongodb::Client, mongodb::error::Error> {
     let client = mongodb::Client::with_uri_str(config.as_conn_str())
         .await?;
 
     Ok(client)
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct EnvLoggerConfig {
+    pub level: String,
+}
+
+pub(crate) fn env_logger(config: &EnvLoggerConfig) {
+    use std::str::FromStr;
+    env_logger::Builder::new().filter_level(log::LevelFilter::from_str(config.level.as_str()).unwrap()).init();
 }

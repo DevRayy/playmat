@@ -9,14 +9,14 @@ use crate::adapters;
 
 #[derive(Serialize, Deserialize)]
 pub struct Cfg {
-    pub log: Log,
     pub grpc: Grpc,
-    pub db: adapters::MongoConfig,
+    pub adapters: Adapters,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Log {
-    pub level: String,
+pub struct Adapters {
+    pub env_logger: adapters::EnvLoggerConfig,
+    pub mongo: adapters::MongoConfig,
 }
 
 #[derive(Serialize, Deserialize)]
