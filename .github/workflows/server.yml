@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ghcr.io/${{ github.repository }}/devcontainer:latest
+    runs-on: ghcr.io/devrayy/playmat/devcontainer:latest
 
     steps:
       - uses: actions/checkout@v2
