@@ -17,11 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build
-        run: just build server
-
       - name: Lint with Just
         run: just lint
 
       - name: Run tests
         run: just test server
+
+      - name: Build
+        run: just build server
