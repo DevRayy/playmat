@@ -35,6 +35,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./.devcontainer
-          platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}/devcontainer:latest
