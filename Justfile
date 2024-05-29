@@ -9,6 +9,9 @@ tidy:
 run app:
     cargo run -p {{app}}
 
+deps:
+    cargo fetch
+
 build app:
     cargo build -p {{app}}
 

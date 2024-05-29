@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch dependencies
+        run: just deps
+
       - name: Lint with Just
         run: just lint
 
