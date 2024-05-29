@@ -9,5 +9,11 @@ tidy:
 run app:
     cargo run -p {{app}}
 
+build app:
+    cargo build -p {{app}}
+
+test app:
+    cargo test -p {{app}}
+
 start container:
     docker compose up -d {{container}}

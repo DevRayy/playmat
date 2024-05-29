@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ghcr.io/${{ github.repository }}/devcontainer:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -21,12 +21,10 @@ jobs:
           override: true
 
       - name: Lint with Just
-        run: |
-          cargo install just
-          just lint
+        run: just lint
 
       - name: Build
-        run: cargo build --verbose
+        run: just build server
 
       - name: Run tests
-        run: cargo test --verbose
+        run: just test server
