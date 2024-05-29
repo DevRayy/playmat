@@ -17,8 +17,30 @@ pub struct Feature {
 }
 
 impl Feature {
-    pub async fn new(mongo_client: mongodb::Client) -> Self {
-        Self { mongo_client }
+    pub async fn new(mongo_client: mongodb::Client) -> Result<Self, Error> {
+        let s = Self { mongo_client };
+        s.init().await?;
+        Ok(s)
+    }
+
+    async fn init(&self) -> Result<(), Error> {
+        self.mongo_client
+            .database("auth")
+            .collection::<Self>("users")
+            .create_index(
+                mongodb::IndexModel::builder()
+                    .keys(doc! { "email": 1 })
+                    .options(
+                        mongodb::options::IndexOptions::builder()
+                            .unique(true)
+                            .build(),
+                    )
+                    .build(),
+                None,
+            )
+            .await?;
+
+        Ok(())
     }
 
     pub async fn run(&self, data: Query) -> Result<(), Error> {
@@ -57,6 +79,8 @@ pub enum Error {
     DuplicateEmail,
     InvalidEmail,
 }
+
+impl std::error::Error for Error {}
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
