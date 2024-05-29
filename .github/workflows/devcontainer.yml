@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "REPOSITORY_LC=${DATA,,}" >>${GITHUB_ENV}
         env:
-          DATA: '${{ github.repository_owner }}/${{ github.repository_name }}'
+          DATA: '${{ github.repository}}'
 
       - name: Build and push
         uses: docker/build-push-action@v5
