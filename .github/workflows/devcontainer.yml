@@ -37,4 +37,4 @@ jobs:
           context: ./.devcontainer
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.REPOSITORY_LC }}/devcontainer:latest
+          tags: ghcr.io/${{ env.REPOSITORY_LC }}/devcontainer:latest
