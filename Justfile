@@ -7,4 +7,7 @@ tidy:
     cargo clippy --allow-dirty --fix -- -D warnings
 
 run app:
-    cargo run -p {{app}} --release
+    cargo run -p {{app}}
+
+start container:
+    docker compose up -d {{container}}

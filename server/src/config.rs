@@ -1,14 +1,17 @@
-use config::{Config, File};
-use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::fmt::Debug;
 use std::net::SocketAddr;
+
+use config::{Config, File};
+use serde::{Deserialize, Serialize};
+
+use crate::adapters;
 
 #[derive(Serialize, Deserialize)]
 pub struct Cfg {
     pub log: Log,
     pub grpc: Grpc,
-    pub db: Db,
+    pub db: adapters::MongoConfig,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -19,15 +22,6 @@ pub struct Log {
 #[derive(Serialize, Deserialize)]
 pub struct Grpc {
     pub address: SocketAddr,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Db {
-    pub host: String,
-    pub port: u16,
-    pub user: String,
-    pub password: String,
-    pub db: String,
 }
 
 impl Cfg {

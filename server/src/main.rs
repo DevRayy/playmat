@@ -1,4 +1,4 @@
-mod build;
+mod adapters;
 mod config;
 mod features;
 mod services;
@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Config: {:?}", cfg);
 
-    let mongo = build::mongo(cfg.db).await?;
+    let mongo = adapters::mongo(cfg.db).await?;
 
     features::dbinit::Feature::new(mongo.clone()).run().await?;
 
