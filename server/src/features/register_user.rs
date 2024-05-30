@@ -1,6 +1,9 @@
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 
+const DATABASE: &str = "auth";
+const COLLECTION: &str = "users";
+
 #[derive(Serialize, Deserialize)]
 struct DbModel {
     email: String,
@@ -25,8 +28,8 @@ impl Feature {
 
     async fn init(&self) -> Result<(), Error> {
         self.mongo_client
-            .database("auth")
-            .collection::<Self>("users")
+            .database(DATABASE)
+            .collection::<Self>(COLLECTION)
             .create_index(
                 mongodb::IndexModel::builder()
                     .keys(doc! { "email": 1 })
@@ -49,8 +52,8 @@ impl Feature {
         let hashed_password = bcrypt::hash(data.password, bcrypt::DEFAULT_COST)?;
 
         self.mongo_client
-            .database("auth")
-            .collection("users")
+            .database(DATABASE)
+            .collection(COLLECTION)
             .insert_one(
                 DbModel {
                     email: data.email,
