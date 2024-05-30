@@ -5,6 +5,7 @@ pub(crate) struct MongoConfig {
     pub host: String,
     pub port: u16,
     pub user: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub db: String,
 }
