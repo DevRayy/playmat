@@ -1,10 +1,9 @@
 use macroquad::prelude::*;
-use macroquad::ui::{
-    Drag, hash,
-    root_ui,
-    Ui, widgets::{self, Group},
-};
 use macroquad::ui::widgets::{Button, InputText};
+use macroquad::ui::{
+    hash, root_ui,
+    widgets::{self},
+};
 use macroquad::window::Conf;
 
 fn window_conf() -> Conf {
@@ -27,9 +26,14 @@ async fn main() {
             .label("Register")
             .titlebar(false)
             .movable(false)
-            .ui(&mut *root_ui(), |ui| {
-                InputText::new(hash!()).label("Username").ui(ui, &mut username);
-                InputText::new(hash!()).label("Password").password(true).ui(ui, &mut password);
+            .ui(&mut root_ui(), |ui| {
+                InputText::new(hash!())
+                    .label("Username")
+                    .ui(ui, &mut username);
+                InputText::new(hash!())
+                    .label("Password")
+                    .password(true)
+                    .ui(ui, &mut password);
                 if Button::new("Register").ui(ui) {
                     println!("Registering...");
                 }
