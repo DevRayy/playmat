@@ -30,9 +30,7 @@ async fn main() {
         .build()
         .unwrap();
 
-    let auth = rt.block_on(async {
-        Arc::new(Mutex::new(client::AuthService::new().await))
-    });
+    let auth = rt.block_on(async { Arc::new(Mutex::new(client::AuthService::new().await)) });
 
     let mut username = String::new();
     let mut password = String::new();
@@ -67,14 +65,11 @@ async fn main() {
 
         macroquad::shapes::draw_circle(x, y, 10.0, macroquad::color::RED);
 
-        if clicked == true {
+        if clicked {
             let auth = auth.clone();
             let username = username.clone();
             let password = password.clone();
-            rt.spawn(async move {
-                auth.lock().await.register(username, password).await
-            });
-            
+            rt.spawn(async move { auth.lock().await.register(username, password).await });
         }
         macroquad::text::draw_text("Hello, world!", 20.0, 20.0, 30.0, macroquad::color::BLACK);
         macroquad::window::next_frame().await
