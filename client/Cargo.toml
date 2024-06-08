@@ -5,3 +5,9 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.4.7"
+tonic = { workspace = true }
+prost = { workspace = true }
+tokio = { workspace = true }
+
+[build-dependencies]
+tonic-build = { workspace = true }
