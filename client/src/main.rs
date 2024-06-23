@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use macroquad::prelude::*;
-use macroquad::ui::widgets::{Button, InputText};
+use macroquad::ui::widgets::{Button, InputText, Label};
 use macroquad::ui::{
     hash, root_ui,
     widgets::{self},
@@ -11,6 +11,7 @@ use tokio::sync::Mutex;
 // use tokio::task::JoinHandle;
 
 mod client;
+mod ui;
 
 fn window_conf() -> Conf {
     Conf {
@@ -36,9 +37,7 @@ async fn main() {
     let mut password = String::new();
     let mut clicked = false;
 
-    let mut x = 0.0;
-    let mut y = 0.0;
-    let speed = 2.0;
+    let loader = ui::Loader::new(ui::Position { x: 100.0, y: 100.0 });
 
     loop {
         macroquad::window::clear_background(macroquad::color::BLACK);
@@ -59,17 +58,15 @@ async fn main() {
                 }
             });
 
-        //draws a point that moves around the screen
-        x = (x + speed) % 100.0;
-        y = (y + speed) % 100.0;
-
-        macroquad::shapes::draw_circle(x, y, 10.0, macroquad::color::RED);
+        loader.draw();
 
         if clicked {
             let auth = auth.clone();
             let username = username.clone();
             let password = password.clone();
-            rt.spawn(async move { auth.lock().await.register(username, password).await });
+            rt.spawn(async move {
+                let _ = auth.lock().await.register(username, password).await;
+            });
         }
         macroquad::text::draw_text("Hello, world!", 20.0, 20.0, 30.0, macroquad::color::BLACK);
         macroquad::window::next_frame().await
