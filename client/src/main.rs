@@ -38,36 +38,23 @@ async fn main() {
     let mut clicked = false;
 
     let loader = ui::Loader::new(ui::Position { x: 100.0, y: 100.0 });
+    let mut fps_counter = ui::FPSCounter::new();
+    let mut window = ui::RegisterWindow::new();
 
     loop {
         macroquad::window::clear_background(macroquad::color::BLACK);
-        widgets::Window::new(hash!(), vec2(400., 200.), vec2(320., 400.))
-            .label("Register")
-            .titlebar(false)
-            .movable(false)
-            .ui(&mut root_ui(), |ui| {
-                InputText::new(hash!())
-                    .label("Username")
-                    .ui(ui, &mut username);
-                InputText::new(hash!())
-                    .label("Password")
-                    .password(true)
-                    .ui(ui, &mut password);
-                if !clicked && Button::new("Register").ui(ui) {
-                    clicked = true;
-                }
-            });
-
+        window.draw();
+        fps_counter.draw();
         loader.draw();
 
-        if clicked {
-            let auth = auth.clone();
-            let username = username.clone();
-            let password = password.clone();
-            rt.spawn(async move {
-                let _ = auth.lock().await.register(username, password).await;
-            });
-        }
+        // if clicked {
+        //     let auth = auth.clone();
+        //     let username = username.clone();
+        //     let password = password.clone();
+        //     rt.spawn(async move {
+        //         let _ = auth.lock().await.register(username, password).await;
+        //     });
+        // }
         macroquad::text::draw_text("Hello, world!", 20.0, 20.0, 30.0, macroquad::color::BLACK);
         macroquad::window::next_frame().await
     }
