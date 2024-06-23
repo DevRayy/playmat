@@ -33,10 +33,6 @@ async fn main() {
 
     let auth = rt.block_on(async { Arc::new(Mutex::new(client::AuthService::new().await)) });
 
-    let mut username = String::new();
-    let mut password = String::new();
-    let mut clicked = false;
-
     let loader = ui::Loader::new(ui::Position { x: 100.0, y: 100.0 });
     let mut fps_counter = ui::FPSCounter::new();
     let mut window = ui::RegisterWindow::new();
