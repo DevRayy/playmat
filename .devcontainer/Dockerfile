@@ -5,5 +5,7 @@ RUN apk add --no-cache musl-dev
 RUN apk add --no-cache just
 RUN apk add --no-cache tar #to make actions/cache work
 
+RUN cargo install wasm-pack
+
 RUN rustup component add rustfmt
 RUN rustup component add clippy
