@@ -41,7 +41,7 @@ pub fn run() {
             .expect("Couldn't append canvas to document body.");
     }
 
-    event_loop.run(move |event, control_flow| match event {
+    let _ = event_loop.run(move |event, control_flow| match event {
         Event::WindowEvent {
             ref event,
             window_id,
