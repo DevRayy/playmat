@@ -1,8 +1,11 @@
+use std::sync::Arc;
+
 use winit::{
     application::ApplicationHandler,
+    dpi::{LogicalSize, PhysicalSize},
     event::*,
     event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
-    window::WindowAttributes,
+    window::{Window, WindowAttributes},
 };
 
 use crate::renderer;
@@ -14,6 +17,7 @@ pub enum UserEvent {
 #[derive(Default)]
 pub struct WinitApplication {
     rnd: Option<renderer::Renderer>,
+    window: Option<Arc<Window>>,
     event_loop_proxy: Option<EventLoopProxy<UserEvent>>,
 }
 
@@ -28,17 +32,13 @@ impl WinitApplication {
 
 impl ApplicationHandler<UserEvent> for WinitApplication {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        let size = winit::dpi::PhysicalSize::new(1280, 720);
         let window = event_loop
-            .create_window(WindowAttributes::default())
-            .unwrap();
+            .create_window(WindowAttributes::default()
+            .with_inner_size(size).with_resizable(false)).unwrap();
 
         #[cfg(target_arch = "wasm32")]
         {
-            // Winit prevents sizing with CSS, so we have to set
-            // the size manually when on web.
-            use winit::dpi::PhysicalSize;
-            let _ = window.request_inner_size(PhysicalSize::new(450, 400));
-
             use winit::platform::web::WindowExtWebSys;
             web_sys::window()
                 .and_then(|win| win.document())
@@ -51,9 +51,11 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
                 .expect("Couldn't append canvas to document body.");
         }
 
+        self.window = Some(Arc::new(window));
+
         #[cfg(target_arch = "wasm32")]
         {
-            let rnd_fut = renderer::Renderer::new(window);
+            let rnd_fut = renderer::Renderer::new(self.window.as_ref().unwrap().clone());
             let proxy = self.event_loop_proxy.as_ref().unwrap().clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let rnd = rnd_fut.await;
@@ -63,7 +65,9 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
 
         #[cfg(not(target_arch = "wasm32"))]
         {
-            let rnd = pollster::block_on(renderer::Renderer::new(window));
+            let rnd = pollster::block_on(renderer::Renderer::new(
+                self.window.as_ref().unwrap().clone(),
+            ));
             let _ = self
                 .event_loop_proxy
                 .as_ref()
@@ -84,16 +88,48 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
                 event_loop.exit();
             }
             WindowEvent::Resized(physical_size) => {
-                log::debug!("Resized to {:?}", physical_size);
+                log::error!("{:?}", physical_size);
+                if self.rnd.is_none() {
+                    return;
+                }
+
+                #[cfg(target_arch = "wasm32")]
+                let physical_size = winit::dpi::PhysicalSize::new(1280, 720); //workaround for mysterious events on wasm
+
+                self.rnd.as_mut().unwrap().resize(physical_size);
+            }
+            WindowEvent::RedrawRequested => {
+                if self.rnd.is_none() {
+                    return;
+                }
+
+                match self.rnd.as_mut().unwrap().render() {
+                    Ok(_) => (),
+                    Err(wgpu::SurfaceError::Lost) => {
+                        self.rnd
+                            .as_mut()
+                            .unwrap()
+                            .resize(self.window.as_ref().unwrap().inner_size());
+                    }
+                    Err(wgpu::SurfaceError::OutOfMemory) => {
+                        log::error!("Out of memory");
+                    }
+                    Err(e) => log::error!("{:?}", e),
+                }
             }
             _ => (),
+        }
+    }
+
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        if let Some(window) = self.window.as_ref() {
+            window.request_redraw();
         }
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::SetRenderer(rnd) => {
-                log::error!("Renderer set");
                 self.rnd = Some(rnd);
             }
         }
