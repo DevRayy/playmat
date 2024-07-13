@@ -2,7 +2,7 @@ use winit::{
     application::ApplicationHandler,
     event::*,
     event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
-    window::{Window, WindowAttributes},
+    window::{WindowAttributes},
 };
 
 use crate::renderer;
@@ -10,7 +10,6 @@ use crate::renderer;
 pub enum UserEvent {
     SetRenderer(renderer::Renderer),
 }
-
 
 #[derive(Default)]
 pub struct WinitApplication {
@@ -65,7 +64,12 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
         #[cfg(not(target_arch = "wasm32"))]
         {
             let rnd = pollster::block_on(renderer::Renderer::new(window));
-            let _ = self.event_loop_proxy.as_ref().unwrap().clone().send_event(UserEvent::SetRenderer(rnd));
+            let _ = self
+                .event_loop_proxy
+                .as_ref()
+                .unwrap()
+                .clone()
+                .send_event(UserEvent::SetRenderer(rnd));
         }
     }
 
@@ -86,11 +90,7 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
         }
     }
 
-    fn user_event(
-        &mut self,
-        _event_loop: &ActiveEventLoop,
-        event: UserEvent,
-    ) {
+    fn user_event(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
         match event {
             UserEvent::SetRenderer(rnd) => {
                 log::error!("Renderer set");
