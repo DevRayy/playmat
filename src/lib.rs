@@ -2,7 +2,7 @@ use winit::{
     application::ApplicationHandler,
     event::*,
     event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowAttributes}
+    window::{Window, WindowAttributes},
 };
 
 #[cfg(target_arch = "wasm32")]
@@ -15,7 +15,9 @@ struct App {
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let window = event_loop.create_window(WindowAttributes::default()).unwrap();
+        let window = event_loop
+            .create_window(WindowAttributes::default())
+            .unwrap();
 
         #[cfg(target_arch = "wasm32")]
         {
@@ -23,7 +25,7 @@ impl ApplicationHandler for App {
             // the size manually when on web.
             use winit::dpi::PhysicalSize;
             let _ = window.request_inner_size(PhysicalSize::new(450, 400));
-    
+
             use winit::platform::web::WindowExtWebSys;
             web_sys::window()
                 .and_then(|win| win.document())
@@ -49,6 +51,9 @@ impl ApplicationHandler for App {
             WindowEvent::CloseRequested => {
                 event_loop.exit();
             }
+            WindowEvent::Resized(physical_size) => {
+                log::debug!("Resized to {:?}", physical_size);
+            }
             _ => (),
         }
     }
@@ -66,8 +71,6 @@ pub fn run() {
     }
 
     let event_loop = EventLoop::new().unwrap();
-
-
 
     let mut app = App::default();
 
