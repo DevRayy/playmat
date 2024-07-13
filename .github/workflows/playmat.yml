@@ -26,6 +26,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
+            pkg/
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Lint with Just
@@ -34,5 +35,8 @@ jobs:
       - name: Run tests
         run: just test
 
-      - name: Build
-        run: just build
+      - name: Build desktop
+        run: just build-desktop
+
+      - name: Build web
+        run: just build-web

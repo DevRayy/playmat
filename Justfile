@@ -6,11 +6,17 @@ tidy:
     cargo fmt
     cargo clippy --allow-dirty --fix -- -D warnings
 
-run:
+run-desktop:
     cargo run
 
-build:
+build-desktop:
     cargo build
+
+run-web: build-web
+    python3 -m http.server 8080
+
+build-web:
+    wasm-pack build --target web
 
 test:
     cargo test
