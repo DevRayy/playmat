@@ -1,13 +1,12 @@
-
 use winit::window::Window;
 
 pub struct Renderer {
-    instance: wgpu::Instance,
-    surface: wgpu::Surface<'static>,
-    adapter: wgpu::Adapter,
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    config: wgpu::SurfaceConfiguration,
+    _instance: wgpu::Instance,
+    _surface: wgpu::Surface<'static>,
+    _adapter: wgpu::Adapter,
+    _device: wgpu::Device,
+    _queue: wgpu::Queue,
+    _config: wgpu::SurfaceConfiguration,
 }
 
 impl Renderer {
@@ -76,12 +75,12 @@ impl Renderer {
         };
 
         Renderer {
-            instance,
-            surface,
-            adapter,
-            device,
-            queue,
-            config,
+            _instance: instance,
+            _surface: surface,
+            _adapter: adapter,
+            _device: device,
+            _queue: queue,
+            _config: config,
         }
     }
 }

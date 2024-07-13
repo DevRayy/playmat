@@ -2,7 +2,7 @@ use winit::{
     application::ApplicationHandler,
     event::*,
     event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
-    window::{WindowAttributes},
+    window::WindowAttributes,
 };
 
 use crate::renderer;
