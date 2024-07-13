@@ -15,7 +15,28 @@ struct App {
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        self.window = Some(event_loop.create_window(WindowAttributes::default()).unwrap());
+        let window = event_loop.create_window(WindowAttributes::default()).unwrap();
+
+        #[cfg(target_arch = "wasm32")]
+        {
+            // Winit prevents sizing with CSS, so we have to set
+            // the size manually when on web.
+            use winit::dpi::PhysicalSize;
+            let _ = window.request_inner_size(PhysicalSize::new(450, 400));
+    
+            use winit::platform::web::WindowExtWebSys;
+            web_sys::window()
+                .and_then(|win| win.document())
+                .and_then(|doc| {
+                    let dst = doc.get_element_by_id("wasm-example")?;
+                    let canvas = web_sys::Element::from(window.canvas()?);
+                    dst.append_child(&canvas).ok()?;
+                    Some(())
+                })
+                .expect("Couldn't append canvas to document body.");
+        }
+
+        self.window = Some(window);
     }
 
     fn window_event(
@@ -46,24 +67,7 @@ pub fn run() {
 
     let event_loop = EventLoop::new().unwrap();
 
-    #[cfg(target_arch = "wasm32")]
-    {
-        // Winit prevents sizing with CSS, so we have to set
-        // the size manually when on web.
-        use winit::dpi::PhysicalSize;
-        let _ = window.request_inner_size(PhysicalSize::new(450, 400));
 
-        use winit::platform::web::WindowExtWebSys;
-        web_sys::window()
-            .and_then(|win| win.document())
-            .and_then(|doc| {
-                let dst = doc.get_element_by_id("wasm-example")?;
-                let canvas = web_sys::Element::from(window.canvas()?);
-                dst.append_child(&canvas).ok()?;
-                Some(())
-            })
-            .expect("Couldn't append canvas to document body.");
-    }
 
     let mut app = App::default();
 
