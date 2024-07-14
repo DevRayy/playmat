@@ -16,7 +16,7 @@ run-web: build-web
     open http://localhost:8080/index.html && python3 -m http.server 8080
 
 build-web:
-    wasm-pack build --target web
+    wasm-pack build --dev --target web
 
 test:
     cargo test
