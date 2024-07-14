@@ -1,9 +1,8 @@
-use std::{cmp::{max, min}, sync::Arc};
+use std::{cmp::max, sync::Arc};
 
 use winit::window::Window;
 
 pub struct Renderer {
-    window: Arc<Window>,
     _instance: wgpu::Instance,
     _surface: wgpu::Surface<'static>,
     _adapter: wgpu::Adapter,
@@ -80,7 +79,6 @@ impl Renderer {
         surface.configure(&device, &config);
 
         Renderer {
-            window: window.clone(),
             _instance: instance,
             _surface: surface,
             _adapter: adapter,
@@ -98,10 +96,14 @@ impl Renderer {
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self._surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self._device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            ._device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("Render Pass"),

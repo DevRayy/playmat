@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use winit::{
     application::ApplicationHandler,
-    dpi::{LogicalSize, PhysicalSize},
     event::*,
     event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
     window::{Window, WindowAttributes},
@@ -34,8 +33,12 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         let size = winit::dpi::PhysicalSize::new(1280, 720);
         let window = event_loop
-            .create_window(WindowAttributes::default()
-            .with_inner_size(size).with_resizable(false)).unwrap();
+            .create_window(
+                WindowAttributes::default()
+                    .with_inner_size(size)
+                    .with_resizable(false),
+            )
+            .unwrap();
 
         #[cfg(target_arch = "wasm32")]
         {
@@ -121,7 +124,7 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
         }
     }
 
-    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
         if let Some(window) = self.window.as_ref() {
             window.request_redraw();
         }
