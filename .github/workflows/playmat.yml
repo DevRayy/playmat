@@ -56,5 +56,5 @@ jobs:
             index.html
             pkg/
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: Pages
         uses: actions/deploy-pages@v4
