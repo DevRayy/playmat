@@ -13,7 +13,7 @@ build-desktop:
     cargo build
 
 run-web: build-web
-    open http://localhost:8080/index.html && python3 -m http.server 8080 
+    open http://localhost:8080/index.html && python3 -m http.server 8080
 
 build-web:
     wasm-pack build --target web
