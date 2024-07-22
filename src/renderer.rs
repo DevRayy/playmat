@@ -48,11 +48,11 @@ const VERTICES: &[Vertex] = &[
 
 pub struct Renderer {
     _instance: wgpu::Instance,
-    _surface: wgpu::Surface<'static>,
+    surface: wgpu::Surface<'static>,
     _adapter: wgpu::Adapter,
-    _device: wgpu::Device,
-    _queue: wgpu::Queue,
-    _config: wgpu::SurfaceConfiguration,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    config: wgpu::SurfaceConfiguration,
     render_pipeline: wgpu::RenderPipeline,
     vertex_buffer: wgpu::Buffer,
 }
@@ -146,11 +146,9 @@ impl Renderer {
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
             },
             fragment: Some(wgpu::FragmentState {
-                // 3.
                 module: &shader,
                 entry_point: "fs_main",
                 targets: &[Some(wgpu::ColorTargetState {
-                    // 4.
                     format: config.format,
                     blend: Some(wgpu::BlendState::REPLACE),
                     write_mask: wgpu::ColorWrites::ALL,
@@ -186,29 +184,29 @@ impl Renderer {
 
         Renderer {
             _instance: instance,
-            _surface: surface,
+            surface,
             _adapter: adapter,
-            _device: device,
-            _queue: queue,
-            _config: config,
+            device,
+            queue,
+            config,
             render_pipeline,
             vertex_buffer,
         }
     }
 
     pub fn resize(&mut self, new_size: winit::dpi::PhysicalSize<u32>) {
-        self._config.width = max(new_size.width, 1);
-        self._config.height = max(new_size.height, 1);
-        self._surface.configure(&self._device, &self._config);
+        self.config.width = max(new_size.width, 1);
+        self.config.height = max(new_size.height, 1);
+        self.surface.configure(&self.device, &self.config);
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
-        let output = self._surface.get_current_texture()?;
+        let output = self.surface.get_current_texture()?;
         let view = output
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self
-            ._device
+            .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Render Encoder"),
             });
@@ -237,7 +235,7 @@ impl Renderer {
         render_pass.draw(0..VERTICES.len() as u32, 0..1);
         drop(render_pass);
 
-        self._queue.submit(std::iter::once(encoder.finish()));
+        self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
 
         Ok(())
