@@ -91,7 +91,6 @@ impl ApplicationHandler<UserEvent> for WinitApplication {
                 event_loop.exit();
             }
             WindowEvent::Resized(physical_size) => {
-                log::error!("{:?}", physical_size);
                 if self.rnd.is_none() {
                     return;
                 }
