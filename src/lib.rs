@@ -2,6 +2,7 @@
 use wasm_bindgen::prelude::*;
 
 mod renderer;
+mod texture;
 mod window;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
